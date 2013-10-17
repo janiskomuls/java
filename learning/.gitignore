@@ -1,0 +1,19 @@
+*.class
+
+# package files
+*.jar
+*.war
+*.ear
+*.db
+
+# generated files
+bin/
+gen/
+build/
+target/
+
+# eclipse
+.project
+.metadata
+.classpath
+.settings/
