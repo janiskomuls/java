@@ -8,7 +8,6 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -43,7 +42,7 @@ public class FunctionsTest {
 	}
 
 	@Test
-	public void shouldConvertCountriesToReversedAndCapitalizedNamesListUsingComposedFunction() {
+	public void shouldConvertListUsingComposedFunction() {
 		Function<Country, String> composedFunction = createComposedFunctionToGetReversedAndCapitalizedNamesList();
 
 		Collection<String> reversedAndCapitalizedNames = transform(countries, composedFunction);
@@ -52,21 +51,21 @@ public class FunctionsTest {
 	}
 
 	@Test
-	public void shouldConvertCountriesMapToCapitalsListUsingForMapFunction() {
+	public void shouldConvertMapToListUsingForMapFunction() {
 		Collection<String> capitals = transform(getCountryNamesList(), capitalsFromCountriesFunction());
 
 		assertThat(capitals, contains("Riga", "Buenos Aires", "Kingston"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void shouldThrowExceptionWhileConvertCountriesMapToCapitalsListUsingForMapFunction() {
+	public void shouldThrowIllegalArgumentExceptionWhileConvertMapToListUsingForMapFunction() {
 		Collection<String> capitals = transform(asList("Latvia", "Uganda"), capitalsFromCountriesFunction());
 
 		assertThat(capitals, contains("Riga"));
 	}
 
 	@Test
-	public void shouldSetUnknownToUnexistingKeysWhileConvertCountriesMapToCapitalsListUsingForMapFunction() {
+	public void shouldSetUnknownToUnexistingKeysWhileConvertMapToListUsingForMapFunction() {
 		Function<String, String> capitalsFromUnknownCountriesFunction = forMap(getCountriesMap(), "Unknown");
 
 		Collection<String> capitals = transform(asList("Latvia", "Uganda"), capitalsFromUnknownCountriesFunction);
