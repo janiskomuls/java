@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 
 import org.apache.bval.constraints.Email;
 
-public class AdultUser implements User {
+public class Adult implements User {
 	@NotEmptyCustomAnnotation
 	private String name;
 
@@ -34,7 +34,7 @@ public class AdultUser implements User {
 	
 	private Child child2;
 
-	public AdultUser(String name, Integer age, String email, String phone) {
+	public Adult(String name, Integer age, String email, String phone) {
 		this.name = name;
 		this.age = age;
 		this.email = email;
