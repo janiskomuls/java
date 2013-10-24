@@ -1,4 +1,4 @@
-package learning.javabean.validation;
+package learning.javabean;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.CONSTRUCTOR;

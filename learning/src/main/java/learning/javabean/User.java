@@ -1,6 +1,6 @@
-package learning.javabean.validation;
+package learning.javabean;
 
-interface User {
+public interface User {
 	String getName();
 
 	Integer getAge();

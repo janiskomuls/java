@@ -11,9 +11,15 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import learning.javabean.AdultUser;
+import learning.javabean.Child;
+import learning.javabean.User;
+
 import org.apache.bval.jsr303.ApacheValidationProvider;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -21,6 +27,8 @@ import org.junit.Test;
  * 
  */
 public class ApacheBeanValidationProviderTest {
+
+	private static final int INCORRECT_CHILD_AGE = 6;
 
 	private static final int CORRECT_AGE_19 = 19;
 
@@ -46,7 +54,7 @@ public class ApacheBeanValidationProviderTest {
 
 	@Test
 	public void shouldFailWithTooSmallAge() {
-		User adultUser = new AdultUserBean(CORRECT_NAME, INCORRECT_AGE_12, CORRECT_EMAIL, CORRECT_PHONE);
+		User adultUser = new AdultUser(CORRECT_NAME, INCORRECT_AGE_12, CORRECT_EMAIL, CORRECT_PHONE);
 
 		Set<ConstraintViolation<User>> violations = validator.validate(adultUser);
 
@@ -59,8 +67,35 @@ public class ApacheBeanValidationProviderTest {
 	}
 
 	@Test
+	public void shouldValidateNestedBean() {
+		AdultUser adultUser = new AdultUser(CORRECT_NAME, CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
+
+		adultUser.setChild(new Child(CORRECT_NAME, INCORRECT_CHILD_AGE));
+
+		Set<ConstraintViolation<AdultUser>> violations = validator.validate(adultUser);
+
+		assertThat(violations, hasSize(1));
+
+		ConstraintViolation<AdultUser> violation = violations.iterator().next();
+
+		assertThat(violation.getPropertyPath().toString(), is("child.age"));
+		assertThat(violation.getMessage(), is("must be less than or equal to 5"));
+	}
+
+	@Test
+	public void shouldNotValidateNestedBean() {
+		AdultUser adultUser = new AdultUser(CORRECT_NAME, CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
+
+		adultUser.setChild2(new Child(CORRECT_NAME, INCORRECT_CHILD_AGE));
+
+		Set<ConstraintViolation<AdultUser>> violations = validator.validate(adultUser);
+
+		assertThat(violations, hasSize(0));
+	}
+
+	@Test
 	public void shouldFailWithTooBigAge() {
-		User adultUser = new AdultUserBean(CORRECT_NAME, INCORRECT_AGE_4231, CORRECT_EMAIL, CORRECT_PHONE);
+		User adultUser = new AdultUser(CORRECT_NAME, INCORRECT_AGE_4231, CORRECT_EMAIL, CORRECT_PHONE);
 
 		Set<ConstraintViolation<User>> violations = validator.validate(adultUser);
 
@@ -74,7 +109,7 @@ public class ApacheBeanValidationProviderTest {
 
 	@Test
 	public void shouldFailWithNullAge() {
-		User adultUser = new AdultUserBean(CORRECT_NAME, null, CORRECT_EMAIL, CORRECT_PHONE);
+		User adultUser = new AdultUser(CORRECT_NAME, null, CORRECT_EMAIL, CORRECT_PHONE);
 
 		Set<ConstraintViolation<User>> violations = validator.validate(adultUser);
 
@@ -88,7 +123,7 @@ public class ApacheBeanValidationProviderTest {
 
 	@Test
 	public void shouldFailWithIncorrectEmail() {
-		User adultUser = new AdultUserBean(CORRECT_NAME, CORRECT_AGE_55, "johan#gmail.com", CORRECT_PHONE);
+		User adultUser = new AdultUser(CORRECT_NAME, CORRECT_AGE_55, "johan#gmail.com", CORRECT_PHONE);
 
 		Set<ConstraintViolation<User>> violations = validator.validate(adultUser);
 
@@ -102,7 +137,7 @@ public class ApacheBeanValidationProviderTest {
 
 	@Test
 	public void shouldFailWithEmptyName() {
-		User adultUser = new AdultUserBean("", CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
+		User adultUser = new AdultUser("", CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
 
 		Set<ConstraintViolation<User>> violations = validator.validate(adultUser);
 
@@ -116,7 +151,7 @@ public class ApacheBeanValidationProviderTest {
 
 	@Test
 	public void shouldFailWithNullName() {
-		User adultUser = new AdultUserBean(null, CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
+		User adultUser = new AdultUser(null, CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
 
 		Set<ConstraintViolation<User>> violations = validator.validate(adultUser);
 
@@ -130,7 +165,7 @@ public class ApacheBeanValidationProviderTest {
 
 	@Test
 	public void shouldFailWithIncorrectPhone() {
-		User adultUser = new AdultUserBean(CORRECT_NAME, CORRECT_AGE_19, CORRECT_EMAIL, "371-22-156666");
+		User adultUser = new AdultUser(CORRECT_NAME, CORRECT_AGE_19, CORRECT_EMAIL, "371-22-156666");
 
 		Set<ConstraintViolation<User>> violations = validator.validate(adultUser);
 
@@ -143,8 +178,26 @@ public class ApacheBeanValidationProviderTest {
 	}
 
 	@Test
+	public void shouldValidateNonBeans() {
+		Set<ConstraintViolation<Object>> violations = validator.validate((Object) "");
+
+		assertThat(violations, hasSize(0));
+
+		violations = validator.validate((Object) 12);
+
+		assertThat(violations, hasSize(0));
+	}
+
+	@Test
+	public void shouldNull() {
+		User adultUser = new AdultUser(CORRECT_NAME, CORRECT_AGE_19, CORRECT_EMAIL, "371-22-156666");
+		Set<ConstraintViolation<ImmutableMap<Integer, User>>> violations = validator.validate(ImmutableMap.of(1, adultUser, 2, adultUser));
+		assertThat(violations, hasSize(0));
+	}
+
+	@Test
 	public void shouldPassValidation() {
-		User adultUser = new AdultUserBean(CORRECT_NAME, CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
+		User adultUser = new AdultUser(CORRECT_NAME, CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
 
 		Set<ConstraintViolation<User>> violations = validator.validate(adultUser);
 
