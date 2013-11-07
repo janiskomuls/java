@@ -1,8 +1,7 @@
 package learning.javabean.validation;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.Set;
 
@@ -91,6 +90,22 @@ public class ApacheBeanValidationProviderTest {
 		Set<ConstraintViolation<Adult>> violations = validator.validate(adultUser);
 
 		assertThat(violations, hasSize(0));
+	}
+
+	@Test
+	public void shouldValidateCollectionContent() {
+		Adult adultUser = new Adult(CORRECT_NAME, CORRECT_AGE_19, CORRECT_EMAIL, CORRECT_PHONE);
+
+		adultUser.addChild(new Child(CORRECT_NAME, INCORRECT_CHILD_AGE));
+
+		Set<ConstraintViolation<Adult>> violations = validator.validate(adultUser);
+
+		assertThat(violations, hasSize(1));
+
+		ConstraintViolation<Adult> violation = violations.iterator().next();
+
+		assertThat(violation.getPropertyPath().toString(), is("children[0].age"));
+		assertThat(violation.getMessage(), is("must be less than or equal to 5"));
 	}
 
 	@Test

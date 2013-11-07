@@ -1,6 +1,8 @@
 package learning.javabean;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
@@ -31,8 +33,11 @@ public class Adult implements User {
 
 	@Valid
 	private Child child;
-	
+
 	private Child child2;
+
+	@Valid
+	private List<Child> children = new ArrayList<Child>();
 
 	public Adult(String name, Integer age, String email, String phone) {
 		this.name = name;
@@ -79,5 +84,13 @@ public class Adult implements User {
 
 	public void setChild2(Child child2) {
 		this.child2 = child2;
+	}
+
+	public List<Child> getChildren() {
+		return children;
+	}
+
+	public void addChild(Child child) {
+		children.add(child);
 	}
 }

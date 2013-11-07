@@ -1,15 +1,12 @@
 package learning.guava;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singleton;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collections;
 import java.util.List;
 
-import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
